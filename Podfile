@@ -10,6 +10,9 @@ target 'GitHubAPIDemo' do
   pod 'RxCocoa', '6.5.0'
   pod 'RxDataSources', '~> 5.0'
   pod 'Moya', '~> 15.0'
-  pod 'Action'
+  pod 'Moya/RxSwift', '~> 15.0'
+  pod 'RxSwiftExt'
+  pod 'Firebase/Core'
+  pod 'Firebase/Auth'
 
 end
