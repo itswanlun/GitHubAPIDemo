@@ -16,7 +16,7 @@ extension TabBarController {
     }
     
     func setupViewControllers() {
-        let viewController = ViewController()
+        let viewController = HomeViewController()
         let navigationController = UINavigationController(rootViewController: viewController)
         
         navigationController.tabBarItem.image = UIImage(systemName: "person.crop.circle")
