@@ -12,17 +12,21 @@ class HomeViewModel {
     
     // MARK: - Output
     var result = PublishSubject<[Section]>()
+    let isLoading: Observable<Bool>
     
     init() {
         let searchSubject = PublishSubject<String>()
         searchText = searchSubject.asObserver()
+        
+        let indicator = ActivityIndicator()
+        isLoading = indicator.asObservable()
         
         let profileResult = searchSubject.asObservable()
             .filter { !$0.isEmpty }
             .flatMapLatest { keyword in
                 provider.rx.request(GitHub.searchRepositories(keyword, 1))
                     .map(Repositories.self)
-                    .asObservable()
+                    .trackActivity(indicator)
                     .materialize()
             }
             .share()

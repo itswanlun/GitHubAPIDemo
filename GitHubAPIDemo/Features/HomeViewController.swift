@@ -8,6 +8,9 @@ class HomeViewController: UIViewController {
     // MARK: - Private
     private let viewModel: HomeViewModel
     private let disposeBag = DisposeBag()
+    private let refreshControl: UIRefreshControl = {
+        return UIRefreshControl()
+    }()
     
     lazy var searchBar: UISearchBar = {
         let search = UISearchBar()
@@ -21,6 +24,7 @@ class HomeViewController: UIViewController {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.separatorStyle = .none
+        tableView.refreshControl = refreshControl
         tableView.register(SearchResultCell.self, forCellReuseIdentifier: String(describing: SearchResultCell.self))
         
         return tableView
@@ -65,6 +69,16 @@ class HomeViewController: UIViewController {
             .withLatestFrom(searchBar.rx.text)
             .compactMap { $0 }
             .bind(to: viewModel.searchText)
+            .disposed(by: disposeBag)
+        
+        refreshControl.rx.controlEvent(.valueChanged)
+            .withLatestFrom(searchBar.rx.text)
+            .compactMap { $0 }
+            .bind(to: viewModel.searchText)
+            .disposed(by: disposeBag)
+        
+        viewModel.isLoading
+            .bind(to: refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
     }
 }
