@@ -80,6 +80,12 @@ class HomeViewController: UIViewController {
         viewModel.isLoading
             .bind(to: refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
+        
+        tableView.rx.reachedBottom(offset: 40)
+            .withLatestFrom(searchBar.rx.text)
+            .compactMap { $0 }
+            .bind(to: viewModel.triggerNextPage)
+            .disposed(by: disposeBag)
     }
 }
 
