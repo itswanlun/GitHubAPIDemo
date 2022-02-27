@@ -13,6 +13,7 @@ class HomeViewModel {
     
     // MARK: - Output
     var result = PublishSubject<[Section]>()
+    let isFreshing: Observable<Bool>
     let isLoading: Observable<Bool>
     let page: Observable<Int>
     
@@ -22,6 +23,9 @@ class HomeViewModel {
         
         let triggerNextPageSubject = PublishSubject<String>()
         triggerNextPage = triggerNextPageSubject.asObserver()
+        
+        let refresh = ActivityIndicator()
+        isFreshing = refresh.asObservable()
         
         let indicator = ActivityIndicator()
         isLoading = indicator.asObservable()
@@ -34,7 +38,7 @@ class HomeViewModel {
             .flatMapLatest { keyword in
                 provider.rx.request(GitHub.searchRepositories(keyword, 1))
                     .map(Repositories.self)
-                    .trackActivity(indicator)
+                    .trackActivity(refresh)
                     .materialize()
             }
             .share()

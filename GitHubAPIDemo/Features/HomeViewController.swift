@@ -12,6 +12,12 @@ class HomeViewController: UIViewController {
         return UIRefreshControl()
     }()
     
+    lazy var indicatorView: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+    
     lazy var searchBar: UISearchBar = {
         let search = UISearchBar()
         search.searchBarStyle = UISearchBar.Style.default
@@ -77,7 +83,7 @@ class HomeViewController: UIViewController {
             .bind(to: viewModel.searchText)
             .disposed(by: disposeBag)
         
-        viewModel.isLoading
+        viewModel.isFreshing
             .bind(to: refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
         
@@ -85,6 +91,10 @@ class HomeViewController: UIViewController {
             .withLatestFrom(searchBar.rx.text)
             .compactMap { $0 }
             .bind(to: viewModel.triggerNextPage)
+            .disposed(by: disposeBag)
+        
+        viewModel.isLoading
+            .bind(to: indicatorView.rx.isAnimating)
             .disposed(by: disposeBag)
     }
 }
@@ -95,12 +105,17 @@ extension HomeViewController {
         
         navigationItem.titleView = searchBar
         view.addSubview(tableView)
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
+        footerView.addSubview(indicatorView)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            indicatorView.centerXAnchor.constraint(equalTo: footerView.centerXAnchor)
         ])
+        
+        tableView.tableFooterView = footerView
     }
 }
