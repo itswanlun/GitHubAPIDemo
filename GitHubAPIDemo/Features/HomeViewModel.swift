@@ -19,8 +19,6 @@ class HomeViewModel {
     var searchRepositoriesNoResult = PublishSubject<Bool>()
     var searchRepositoriesFailure = PublishSubject<Error>()
     
-//    var isNoResult = BehaviorRelay<Bool>()
-    
     init() {
         let searchSubject = PublishSubject<String>()
         searchText = searchSubject.asObserver()
@@ -48,7 +46,7 @@ class HomeViewModel {
             .share()
         
         let profileSuccessCondition = profileResult.elements().filter { $0.items != nil }.share()
-        let profileIsEndCondition = profileResult.elements().filter { $0.items == nil }.share()
+        let profileIsEndCondition = profileResult.elements().filter { $0.items.isEmptyOrNil }.share()
         let profileFailureCondition = profileResult.errors().share()
         
         profileSuccessCondition
@@ -56,24 +54,9 @@ class HomeViewModel {
             .bind(to: result)
             .disposed(by: disposeBag)
         
-//        profileSuccessCondition
-//            .map { _ in false }
-//            .bind(to: searchRepositoriesNoResult.asObserver())
-//            .disposed(by: disposeBag)
-//
-//        profileIsEndCondition
-//            .map { _ in true }
-//            .bind(to: searchRepositoriesNoResult.asObserver())
-//            .disposed(by: disposeBag)
-        
         profileFailureCondition
             .bind(to: searchRepositoriesFailure.asObserver())
             .disposed(by: disposeBag)
-        
-//        profileFailureCondition
-//            .map { _ in false }
-//            .bind(to: searchRepositoriesNoResult.asObserver())
-//            .disposed(by: disposeBag)
         
         let nextProfileResult = triggerNextPageSubject.asObservable()
             .debounce(.seconds(1), scheduler: MainScheduler.instance)
@@ -87,7 +70,7 @@ class HomeViewModel {
             .share()
             
         let nextprofileSuccessCondition = nextProfileResult.elements().filter { $0.items != nil }.share()
-        let nextprofileIsEndCondition = nextProfileResult.elements().filter { $0.items == nil }.share()
+        let nextprofileIsEndCondition = nextProfileResult.elements().filter { $0.items.isEmptyOrNil }.share()
         let nextprofileFailureCondition = nextProfileResult.errors().share()
         
         nextprofileSuccessCondition
@@ -106,22 +89,21 @@ class HomeViewModel {
         nextprofileFailureCondition
             .bind(to: searchRepositoriesFailure.asObserver())
             .disposed(by: disposeBag)
-        
-        //
+
         let successCondition = Observable.merge(profileSuccessCondition, nextprofileSuccessCondition)
-        successCondition.debug("🐍")
+        successCondition
             .map { _ in false }
             .bind(to: searchRepositoriesNoResult.asObserver())
             .disposed(by: disposeBag)
         
         let isEndCondition = Observable.merge(profileIsEndCondition, nextprofileIsEndCondition)
-        isEndCondition.debug("🐡")
+        isEndCondition
             .map { _ in true }
             .bind(to: searchRepositoriesNoResult.asObserver())
             .disposed(by: disposeBag)
         
         let failureCondition = Observable.merge(profileFailureCondition, nextprofileFailureCondition)
-        failureCondition.debug("🌸")
+        failureCondition
             .map { _ in false }
             .bind(to: searchRepositoriesNoResult.asObserver())
             .disposed(by: disposeBag)

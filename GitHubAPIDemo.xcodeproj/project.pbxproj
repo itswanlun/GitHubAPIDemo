@@ -30,6 +30,7 @@
 		0EAA60A227CBBD490041B629 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EAA60A127CBBD490041B629 /* ResetPasswordViewController.swift */; };
 		0EAA60A427CBBD6E0041B629 /* ResetPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EAA60A327CBBD6E0041B629 /* ResetPasswordViewModel.swift */; };
 		0EAA60A627CBBE0A0041B629 /* LogoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EAA60A527CBBE0A0041B629 /* LogoutViewController.swift */; };
+		0EAA60A827CCC0A50041B629 /* Optional+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EAA60A727CCC0A50041B629 /* Optional+Ext.swift */; };
 		A154973CA8B214AA8B8BA80E /* Pods_GitHubAPIDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFBBC0CC44B8BB38A6521221 /* Pods_GitHubAPIDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +60,7 @@
 		0EAA60A127CBBD490041B629 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		0EAA60A327CBBD6E0041B629 /* ResetPasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewModel.swift; sourceTree = "<group>"; };
 		0EAA60A527CBBE0A0041B629 /* LogoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutViewController.swift; sourceTree = "<group>"; };
+		0EAA60A727CCC0A50041B629 /* Optional+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Optional+Ext.swift"; sourceTree = "<group>"; };
 		66B80325F43A0E339B8446D2 /* Pods-GitHubAPIDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GitHubAPIDemo.release.xcconfig"; path = "Target Support Files/Pods-GitHubAPIDemo/Pods-GitHubAPIDemo.release.xcconfig"; sourceTree = "<group>"; };
 		AFBBC0CC44B8BB38A6521221 /* Pods_GitHubAPIDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GitHubAPIDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C34069B99CBBFA79655EF249 /* Pods-GitHubAPIDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GitHubAPIDemo.debug.xcconfig"; path = "Target Support Files/Pods-GitHubAPIDemo/Pods-GitHubAPIDemo.debug.xcconfig"; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 			children = (
 				0E2548AF27CA881000C61A13 /* String+Ext.swift */,
 				0E2548B127CA884400C61A13 /* UIImageView+Ext.swift */,
+				0EAA60A727CCC0A50041B629 /* Optional+Ext.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -364,6 +367,7 @@
 				0E48AF4127C3E69300E8AEDA /* HomeViewController.swift in Sources */,
 				0EAA609A27CBBC8B0041B629 /* LoginViewModel.swift in Sources */,
 				0EAA60A227CBBD490041B629 /* ResetPasswordViewController.swift in Sources */,
+				0EAA60A827CCC0A50041B629 /* Optional+Ext.swift in Sources */,
 				0E2548D227CBBA7200C61A13 /* LoginViewController.swift in Sources */,
 				0E48AF3D27C3E69300E8AEDA /* AppDelegate.swift in Sources */,
 				0EAA609E27CBBCFF0041B629 /* SignUpViewController.swift in Sources */,

@@ -54,7 +54,7 @@ class HomeViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "End"
-        label.textColor = .white
+        label.textColor = .black
         label.textAlignment = .center
         label.isHidden = true
         return label
@@ -114,6 +114,7 @@ class HomeViewController: UIViewController {
             .subscribe(onNext: { [weak self] _ in
                 self?.viewModel.result.onNext([])
                 self?.searchBar.resignFirstResponder()
+                self?.noResultLabel.isHidden = true
             })
             .disposed(by: disposeBag)
         
@@ -148,7 +149,7 @@ class HomeViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.searchRepositoriesNoResult.asObservable().debug("🦄")
+        viewModel.searchRepositoriesNoResult.asObservable()
             .subscribe(onNext: { [weak self] isNoResult in
                 if isNoResult {
                     self?.noResultLabel.isHidden = false
