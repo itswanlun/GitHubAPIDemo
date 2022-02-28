@@ -12,9 +12,21 @@ class HomeViewController: UIViewController {
         return UIRefreshControl()
     }()
     
+    private lazy var toolBar: UIToolbar = {
+        let toolBar = UIToolbar()
+        toolBar.barStyle = UIBarStyle.default
+        toolBar.isTranslucent = true
+        toolBar.tintColor = .black
+        toolBar.sizeToFit()
+        
+        return toolBar
+    }()
+        
+    
     lazy var indicatorView: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
+        
         return indicator
     }()
     
@@ -22,6 +34,8 @@ class HomeViewController: UIViewController {
         let search = UISearchBar()
         search.searchBarStyle = UISearchBar.Style.default
         search.placeholder = "Please enter keyword"
+        search.returnKeyType = .done
+        search.inputAccessoryView = toolBar
         
         return search
     }()
@@ -36,6 +50,16 @@ class HomeViewController: UIViewController {
         return tableView
     }()
     
+    lazy var noResultLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "End"
+        label.textColor = .white
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
+    
     init(viewModel: HomeViewModel = HomeViewModel()) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -48,6 +72,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupToolbar()
         bindViewModel()
     }
     
@@ -77,6 +102,21 @@ class HomeViewController: UIViewController {
             .bind(to: viewModel.searchText)
             .disposed(by: disposeBag)
         
+        searchBar.rx.searchButtonClicked
+            .subscribe(onNext: { [weak self] in
+                self?.searchBar.resignFirstResponder()
+            })
+            .disposed(by: disposeBag)
+        
+        searchBar.rx.text
+            .observe(on: MainScheduler.asyncInstance)
+            .filter { $0 == "" }
+            .subscribe(onNext: { [weak self] _ in
+                self?.viewModel.result.onNext([])
+                self?.searchBar.resignFirstResponder()
+            })
+            .disposed(by: disposeBag)
+        
         refreshControl.rx.controlEvent(.valueChanged)
             .withLatestFrom(searchBar.rx.text)
             .compactMap { $0 }
@@ -96,6 +136,48 @@ class HomeViewController: UIViewController {
         viewModel.isLoading
             .bind(to: indicatorView.rx.isAnimating)
             .disposed(by: disposeBag)
+        
+        viewModel.searchRepositoriesFailure.asObservable()
+            .subscribe(onNext:{ [weak self] error in
+                let alertController = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+                
+                let defaultAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+                alertController.addAction(defaultAction)
+                
+                self?.present(alertController, animated: true, completion: nil)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.searchRepositoriesNoResult.asObservable().debug("🦄")
+            .subscribe(onNext: { [weak self] isNoResult in
+                if isNoResult {
+                    self?.noResultLabel.isHidden = false
+                } else {
+                    self?.noResultLabel.isHidden = true
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func setupToolbar() {
+        let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItem.Style.done, target: self, action: nil)
+        let spaceButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
+        let cancelButton = UIBarButtonItem(title: "Cancel", style: UIBarButtonItem.Style.plain, target: self, action: nil)
+        
+        doneButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                self?.searchBar.resignFirstResponder()
+            })
+            .disposed(by: disposeBag)
+        
+        cancelButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                self?.searchBar.resignFirstResponder()
+            })
+            .disposed(by: disposeBag)
+        
+        toolBar.setItems([cancelButton, spaceButton, doneButton], animated: false)
+        toolBar.isUserInteractionEnabled = true
     }
 }
 
@@ -107,13 +189,16 @@ extension HomeViewController {
         view.addSubview(tableView)
         let footerView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
         footerView.addSubview(indicatorView)
+        footerView.addSubview(noResultLabel)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            indicatorView.centerXAnchor.constraint(equalTo: footerView.centerXAnchor)
+            indicatorView.centerXAnchor.constraint(equalTo: footerView.centerXAnchor),
+            noResultLabel.centerXAnchor.constraint(equalTo: footerView.centerXAnchor),
+            noResultLabel.centerYAnchor.constraint(equalTo: footerView.centerYAnchor)
         ])
         
         tableView.tableFooterView = footerView

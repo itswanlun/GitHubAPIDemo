@@ -16,12 +16,19 @@ extension TabBarController {
     }
     
     func setupViewControllers() {
-        let viewController = HomeViewController()
-        let navigationController = UINavigationController(rootViewController: viewController)
+        let HomeviewController = HomeViewController()
+        let homeNavigationController = UINavigationController(rootViewController: HomeviewController)
         
-        navigationController.tabBarItem.image = UIImage(systemName: "person.crop.circle")
-        navigationController.tabBarItem.title = "用戶"
+        homeNavigationController.tabBarItem.image = UIImage(systemName: "person.crop.circle")
+        homeNavigationController.tabBarItem.title = "GitHub"
         
-        viewControllers = [navigationController]
+        let LogoutviewController = LogoutViewController()
+        let logoutNavigationController = UINavigationController(rootViewController: LogoutviewController)
+        
+        logoutNavigationController.tabBarItem.image = UIImage(systemName: "rectangle.portrait.and.arrow.right")
+        logoutNavigationController.tabBarItem.title = "Logout"
+        
+        
+        viewControllers = [homeNavigationController, logoutNavigationController]
     }
 }
